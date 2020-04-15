@@ -16,11 +16,14 @@ p = vlc.MediaPlayer("Beat/Selena-Boyfriend.mp3")
 p.play()
 
 #window fit 
-'''window_x = 340
+window_x = 340
 window_y = 340
+rows = 340
+cols=340
+channels=3
 
-cv2.namedWindow("Big picture")
-'''
+#cv2.namedWindow("Big picture")
+#big_frame = m = np.zeros((window_y, window_x*3, 3), dtype=np.uint8)
 
 #image function
 num_list = ["sss"]
@@ -32,11 +35,14 @@ def ImageDisplay():
             imgpath = os.path.join(folder_path, path)
             num_list.insert(1, imgpath)
             frame = cv2.imread(imgpath, 1)
-            width = 500
+            '''width = 500
             height = 400
             dim = (width, height)
-            frame = cv2.resize(frame, dim, interpolation = cv2.INTER_AREA)
+            frame = cv2.resize(frame, dim, interpolation = cv2.INTER_AREA)'''
+            frame = cv2.resize(frame, (500, 400))
             cv2.imshow('Window', frame)
+            #print(frame.shape)
+            
             key = cv2.waitKey(6000)
 
 def resizeFrame(frame):
@@ -124,17 +130,30 @@ class hand(object):
 				score = score + 1
 		#cv2.imshow('img',thresh1)
 		#big_frame = m = np.zeros((window_y, window_x*3, 3), dtype=np.uint8)
-		cv2.imshow('img1',resizeFrame(img))
-		#cv2.imshow('img2',img2)
-		numpy_horizontal1  = np.hstack((resizeFrame(thresh1),resizeFrame(img2)))
 		
-		cv2.imshow("main",numpy_horizontal1)
+		#cv2.imshow('img2',img2)
+
+                #Adding 3rd channels to images
+		cv2.imwrite('gray.jpg', img2)
+		img2 = cv2.imread('gray.jpg')
+		cv2.imwrite('img.jpg',thresh1)
+		thresh1 = cv2.imread('img.jpg')
+		
+		#cv2.imshow('img1',img)
+		#cv2.imshow('img',thresh1)
+		#cv2.imshow('img2',img2)
+		numpy_horizontal1  = np.hstack((resizeFrame(img2),resizeFrame(img)))
+		numpy_horizontal2  = np.hstack((resizeFrame(img2),resizeFrame(thresh1)))
+		numpy_vertical = np.concatenate((numpy_horizontal1, numpy_horizontal2))
+                
+		cv2.imshow("main",numpy_vertical)
 		#cv2.imshow("maidcvn",numpy_horizontal2)
 		#try fit 3 window
-		'''frame1 = cv2.resize(thresh1, (window_y, window_x))
+		'''frame1 = cv2.resize(img, (window_y, window_x))
 		frame2 = cv2.resize(img2, (window_y, window_x))
-		frame3 = cv2.resize(img, (window_y, window_x))
-		rows,cols = frame1.shape
+		frame3 = cv2.resize(thresh1, (window_y, window_x))
+		#rows,cols,channels = frame1.shape
+		print (frame1.shape)
 
 		#Add the first frame to the big picture
 		roi = big_frame[0:cols, 0:rows]
@@ -150,6 +169,12 @@ class hand(object):
 		roi = big_frame[0:cols, rows*2:rows*3]
 		dst = cv2.add(roi,frame3)
 		big_frame[0:cols, rows*2:rows*3] = dst
+
+		#Add third frame to the big picture
+		#roi = big_frame[0:cols, rows*3:rows*4]
+		#dst = cv2.add(roi,frame3)
+		#big_frame[0:cols, rows*3:rows*4] = dst
+            
 
 		cv2.imshow("Big picture", big_frame)'''
                 
