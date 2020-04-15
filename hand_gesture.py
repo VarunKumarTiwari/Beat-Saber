@@ -1,6 +1,7 @@
 # IMPORTING LIBRARIES
 import numpy as np
 import cv2
+import os
 import math
 from random import seed
 from random import randint
@@ -8,31 +9,55 @@ import threading
 import time
 import threading
 import time
+import vlc
+
+
+p = vlc.MediaPlayer("Beat/Selena-Boyfriend.mp3")
+p.play()
+
+#window fit 
+'''window_x = 340
+window_y = 340
+
+cv2.namedWindow("Big picture")
+'''
 
 #image function
-def ImageDisplay(i):
-    display = i;
-    imagelist = ["display image/one.jpg", "display image/two2.jpg", "display image/three.jpg","display image/four.jpg","display image/five.jpg"]
-    image1 = cv2.imread(imagelist[i])
-    width = 640
-    height = 480
-    dim = (width, height)
-    image = cv2.resize(image1, dim, interpolation = cv2.INTER_AREA)
-    return image
+num_list = ["sss"]
+globalveriable = 1
+def ImageDisplay():
+    folder_path = 'display image/'
+    for i in range (0,5):
+        for path in os.listdir(folder_path):#loop to read one image at a time 
+            imgpath = os.path.join(folder_path, path)
+            num_list.insert(1, imgpath)
+            frame = cv2.imread(imgpath, 1)
+            width = 500
+            height = 400
+            dim = (width, height)
+            frame = cv2.resize(frame, dim, interpolation = cv2.INTER_AREA)
+            cv2.imshow('Window', frame)
+            key = cv2.waitKey(6000)
 
-def ImageChanger():
-        for i in range(0, 5):
-                print(i)
-                cv2.imshow('display',ImageDisplay(i))
-                time.sleep(10)
-#threading.Thread(target=ImageChanger).start()
+def resizeFrame(frame):
+    width = 500
+    height = 400
+    dim = (width, height)
+    frame = cv2.resize(frame, dim, interpolation = cv2.INTER_AREA)
+    return frame
+
+threading.Thread(target=ImageDisplay).start()
+
+            
 #class
 class hand(object):
 		#LOADING HAND CASCADE
 	hand_cascade = cv2.CascadeClassifier('hand_haar_cascade.xml')
+	#threading.Thread(target=ImageChanger).start()
 
 # VIDEO CAPTURE
 	cap = cv2.VideoCapture(0)
+	score = 0
 	while 1:
 		ret, img = cap.read()
 		blur = cv2.GaussianBlur(img,(5,5),0) # BLURRING IMAGE TO SMOOTHEN EDGES
@@ -54,7 +79,8 @@ class hand(object):
 
 		cv2.drawContours(img, contours, 0, (255,255,0), 3)
 		cv2.drawContours(final, contours, 0, (255,255,0), 3)
-		cv2.imshow('display',ImageDisplay(1))
+		#cv2.imshow('display',ImageDisplay(1))
+		#print ("global",num_list)   
 
 
 		if len(contours) > 0:
@@ -80,27 +106,57 @@ class hand(object):
 					# ignore angles > 90 and highlight rest with red dots
 					if angle <= 90:
 						count_defects += 1
-			
 			# define actions required
-			if count_defects == 1 :
-				cv2.putText(img,"THIS IS 2", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
-				cv2.putText(img,"display", (70, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
-			elif count_defects==0:
-				cv2.putText(img,"THIS IS 1", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
-			elif count_defects == 2:
-				cv2.putText(img, "THIS IS 3", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
-			elif count_defects == 3:
-				cv2.putText(img,"This is 4", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
-			elif count_defects == 4:
-				cv2.putText(img,"THIS IS 5", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+			if count_defects == 1 and num_list[1]=="display image/two2.jpg":
+				cv2.putText(img,"Correct!!! THIS IS 2", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+				score = score + 1
+			elif count_defects==0 and num_list[1]=="display image/one.jpg":
+				cv2.putText(img,"Correct!!! THIS IS 1", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+				score = score + 1
+			elif count_defects == 2 and num_list[1]=="display image/three.jpg":
+				cv2.putText(img, "Correct!!! THIS IS 3", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+				score = score + 1
+			elif count_defects == 3 and num_list[1]=="display image/four.jpg":
+				cv2.putText(img,"Correct!!! This is 4", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+				score = score + 1
+			elif count_defects == 4 and num_list[1]=="display image/five.jpg":
+				cv2.putText(img,"Correct!!! THIS IS 5", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+				score = score + 1
+		#cv2.imshow('img',thresh1)
+		#big_frame = m = np.zeros((window_y, window_x*3, 3), dtype=np.uint8)
+		cv2.imshow('img1',resizeFrame(img))
+		#cv2.imshow('img2',img2)
+		numpy_horizontal1  = np.hstack((resizeFrame(thresh1),resizeFrame(img2)))
 		
-		cv2.imshow('img',thresh1)
-		cv2.imshow('img1',img)
-		cv2.imshow('img2',img2)
-		
+		cv2.imshow("main",numpy_horizontal1)
+		#cv2.imshow("maidcvn",numpy_horizontal2)
+		#try fit 3 window
+		'''frame1 = cv2.resize(thresh1, (window_y, window_x))
+		frame2 = cv2.resize(img2, (window_y, window_x))
+		frame3 = cv2.resize(img, (window_y, window_x))
+		rows,cols = frame1.shape
 
+		#Add the first frame to the big picture
+		roi = big_frame[0:cols, 0:rows]
+		dst = cv2.add(roi,frame1)
+		big_frame[0:cols, 0:rows] = dst
+
+		#Add second frame to the big picture
+		roi = big_frame[0:cols, rows:rows*2]
+		dst = cv2.add(roi,frame2)
+		big_frame[0:cols, rows:rows*2] = dst
+
+		#Add third frame to the big picture
+		roi = big_frame[0:cols, rows*2:rows*3]
+		dst = cv2.add(roi,frame3)
+		big_frame[0:cols, rows*2:rows*3] = dst
+
+		cv2.imshow("Big picture", big_frame)'''
+                
+		print ("Game Score Counter",score)
 		k = cv2.waitKey(30) & 0xff
                 ##if k == 27:     
                 ##break
 	cap.release()
 	cv2.destroyAllWindows()
+
