@@ -35,15 +35,14 @@ def ImageDisplay():
             imgpath = os.path.join(folder_path, path)
             num_list.insert(1, imgpath)
             frame = cv2.imread(imgpath, 1)
-            '''width = 500
-            height = 400
-            dim = (width, height)
-            frame = cv2.resize(frame, dim, interpolation = cv2.INTER_AREA)'''
             frame = cv2.resize(frame, (500, 400))
             cv2.imshow('Window', frame)
             #print(frame.shape)
             
             key = cv2.waitKey(6000)
+
+threading.Thread(target=ImageDisplay).start()
+
 
 def resizeFrame(frame):
     width = 500
@@ -52,7 +51,6 @@ def resizeFrame(frame):
     frame = cv2.resize(frame, dim, interpolation = cv2.INTER_AREA)
     return frame
 
-threading.Thread(target=ImageDisplay).start()
 
             
 #class
@@ -114,19 +112,19 @@ class hand(object):
 						count_defects += 1
 			# define actions required
 			if count_defects == 1 and num_list[1]=="display image/two2.jpg":
-				cv2.putText(img,"Correct!!! THIS IS 2", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+				cv2.putText(img,"Correct!!! THIS IS 2", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 1)
 				score = score + 1
 			elif count_defects==0 and num_list[1]=="display image/one.jpg":
-				cv2.putText(img,"Correct!!! THIS IS 1", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+				cv2.putText(img,"Correct!!! THIS IS 1", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 1)
 				score = score + 1
 			elif count_defects == 2 and num_list[1]=="display image/three.jpg":
-				cv2.putText(img, "Correct!!! THIS IS 3", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+				cv2.putText(img, "Correct!!! THIS IS 3", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 1)
 				score = score + 1
 			elif count_defects == 3 and num_list[1]=="display image/four.jpg":
-				cv2.putText(img,"Correct!!! This is 4", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+				cv2.putText(img,"Correct!!! This is 4", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 1)
 				score = score + 1
 			elif count_defects == 4 and num_list[1]=="display image/five.jpg":
-				cv2.putText(img,"Correct!!! THIS IS 5", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+				cv2.putText(img,"Correct!!! THIS IS 5", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 1)
 				score = score + 1
 		#cv2.imshow('img',thresh1)
 		#big_frame = m = np.zeros((window_y, window_x*3, 3), dtype=np.uint8)
